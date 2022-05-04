@@ -23,14 +23,17 @@ class ContactsPage extends StatelessWidget {
           isLoading: controller.isLoading.value,
           color: Constants.textColor,
           progressIndicator: Center(
-            child: LoadingAnimationWidget.inkDrop(color: Constants.primaryColor, size: 40,),
+            child: LoadingAnimationWidget.inkDrop(
+              color: Constants.primaryColor,
+              size: 40,
+            ),
           ),
           child: ListView.builder(
-            itemCount: controller.contacts.length,
-            itemBuilder: (BuildContext context,int index) {
+            itemCount: controller.persons.length,
+            itemBuilder: (BuildContext context, int index) {
               return PersonItem(
-                subtitle: controller.contacts[index].phones!.first.label!,
-                name: controller.contacts[index].displayName!,
+                subtitle: controller.persons[index].phone,
+                name: controller.persons[index].username,
               );
             },
           ),

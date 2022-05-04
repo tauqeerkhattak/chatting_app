@@ -5,13 +5,22 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final TextInputType? keyboardType;
   final TextEditingController controller;
-  final bool? hideText;
+  final bool? hideText, filled;
   final String? Function(String?) validator;
+  final Widget? prefix;
+  final Widget? suffix;
+  final Function()? onTap;
   const CustomTextField({
     Key? key,
     required this.label,
     required this.controller,
-    this.hideText, required this.validator, this.keyboardType,
+    this.hideText,
+    required this.validator,
+    this.keyboardType,
+    this.prefix,
+    this.filled,
+    this.suffix,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -23,6 +32,7 @@ class CustomTextField extends StatelessWidget {
         right: 5,
       ),
       child: TextFormField(
+        onTap: onTap,
         controller: controller,
         obscureText: hideText == null ? false : hideText!,
         validator: validator,
@@ -37,15 +47,24 @@ class CustomTextField extends StatelessWidget {
               color: Constants.primaryColor,
             ),
           ),
+          prefixIcon: prefix,
+          suffixIcon: suffix,
           enabled: true,
-          label: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Constants.primaryColor,
-              ),
-            ),
-          ),
+          label: filled ?? true
+              ? Center(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: Constants.tertiaryColor,
+                    ),
+                  ),
+                )
+              : Text(
+                  label,
+                  style: TextStyle(
+                    color: Constants.tertiaryColor,
+                  ),
+                ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(
               Constants.componentRadius,
@@ -54,7 +73,7 @@ class CustomTextField extends StatelessWidget {
               color: Constants.primaryColor,
             ),
           ),
-          filled: true,
+          filled: filled ?? true,
           fillColor: Constants.primaryColor.withOpacity(0.2),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(
