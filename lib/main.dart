@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chatting/screens/splash/splash.dart';
-import 'package:get/get.dart';
 
-void main () async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const FlutterChatting());
@@ -14,7 +14,7 @@ class FlutterChatting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return const MaterialApp(
       home: Splash(),
     );
   }
