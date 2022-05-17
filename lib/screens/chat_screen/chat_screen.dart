@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chatting/data/constants.dart';
 import 'package:flutter_chatting/data/size_config.dart';
@@ -10,35 +9,21 @@ import 'package:flutter_chatting/widgets/custom_textfield.dart';
 import 'package:keyboard_utils/keyboard_aware/keyboard_aware.dart';
 import 'package:provider/provider.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatelessWidget {
   final String name;
 
   const ChatScreen({Key? key, required this.name}) : super(key: key);
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  @override
-  void initState() {
-    super.initState();
-    print('InitState');
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      print('InitState!');
-      Provider.of<ChatProvider>(context).onInit();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    print('Hello');
     return ChangeNotifierProvider<ChatProvider>(
-      create: (context) => ChatProvider(),
+      create: (context) {
+        return ChatProvider().onInit();
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.name,
+            name,
             style: TextStyle(
               color: Constants.textColor,
             ),
@@ -48,10 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         body: Column(
           children: [
-            Consumer<ChatProvider>(
-              builder: (context, data, child) {
-                return Expanded(
-                  child: ListView.builder(
+            Expanded(
+              child: Consumer<ChatProvider>(
+                builder: (context, data, child) {
+                  return ListView.builder(
                     reverse: true,
                     controller: data.scrollController,
                     itemCount: 100,
@@ -61,9 +46,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         isCurrentUser: index % 2 == 0,
                       );
                     },
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
             Consumer<ChatProvider>(
               builder: (context, data, child) {
@@ -95,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         ),
                         onTap: () {
+                          print('Textfield tapped!');
                           data.showEmojis = false;
                         },
                         suffix: IconButton(
@@ -114,26 +100,23 @@ class _ChatScreenState extends State<ChatScreen> {
                         },
                       ),
                     ),
-                    Consumer(
-                      builder: (context, ChatProvider pod, child) {
-                        return KeyboardAware(
-                          builder: (context, config) {
-                            print(config.isKeyboardOpen);
-                            if (config.isKeyboardOpen) {
-                              if (data.showEmojis) {
-                                return showEmojiPicker(pod);
-                              } else {
-                                return const SizedBox();
-                              }
-                            } else {
-                              if (data.showEmojis) {
-                                return showEmojiPicker(pod);
-                              } else {
-                                return const SizedBox();
-                              }
-                            }
-                          },
-                        );
+                    KeyboardAware(
+                      builder: (context, config) {
+                        print(
+                            'Keyboard open: ${config.isKeyboardOpen} showEmojis: ${data.showEmojis}');
+                        if (config.isKeyboardOpen) {
+                          if (data.showEmojis) {
+                            return showEmojiPicker(data);
+                          } else {
+                            return const SizedBox();
+                          }
+                        } else {
+                          if (data.showEmojis) {
+                            return showEmojiPicker(data);
+                          } else {
+                            return const SizedBox();
+                          }
+                        }
                       },
                     ),
                   ],
@@ -147,30 +130,32 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget showEmojiPicker(ChatProvider pod) {
-    return SizedBox(
+    print('ShowEmojiPicker ${pod.keyboardHeight}');
+    return Container(
       width: SizeConfig.screenWidth,
       height: pod.keyboardHeight,
-      child: EmojiPicker(
-        onEmojiSelected: (category, emoji) {
-          pod.messageController.text += emoji.emoji;
-        },
-        onBackspacePressed: () {
-          pod.messageController
-            ..text =
-                pod.messageController.text.characters.skipLast(1).toString()
-            ..selection = TextSelection.fromPosition(
-              TextPosition(
-                offset: pod.messageController.text.length,
-              ),
-            );
-        },
-        config: Config(
-          buttonMode: ButtonMode.MATERIAL,
-          indicatorColor: Constants.primaryColor,
-          iconColorSelected: Constants.primaryColor,
-          backspaceColor: Constants.primaryColor,
-        ),
-      ),
+      color: Constants.primaryColor,
+      // child: EmojiPicker(
+      //   onEmojiSelected: (category, emoji) {
+      //     pod.messageController.text += emoji.emoji;
+      //   },
+      //   onBackspacePressed: () {
+      //     pod.messageController
+      //       ..text =
+      //           pod.messageController.text.characters.skipLast(1).toString()
+      //       ..selection = TextSelection.fromPosition(
+      //         TextPosition(
+      //           offset: pod.messageController.text.length,
+      //         ),
+      //       );
+      //   },
+      //   config: Config(
+      //     buttonMode: ButtonMode.MATERIAL,
+      //     indicatorColor: Constants.primaryColor,
+      //     iconColorSelected: Constants.primaryColor,
+      //     backspaceColor: Constants.primaryColor,
+      //   ),
+      // ),
     );
   }
 }

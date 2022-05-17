@@ -25,21 +25,28 @@ class ChatProvider extends ChangeNotifier {
   ];
   int? listener;
 
-  void onInit() {
-    print('OnInit');
+  ChatProvider onInit() {
+    print('OnInit!');
     listener = _keyboardUtils.add(
       listener: KeyboardListener(
         willShowKeyboard: (height) {
-          keyboardHeight = height;
+          if (height != 0.0) {
+            keyboardHeight = height;
+            print('Keyboard HEight: $height $keyboardHeight');
+          }
           showEmojis = false;
+        },
+        willHideKeyboard: () {
+          print('Keyboard hide: $keyboardHeight');
         },
       ),
     );
+    return ChatProvider();
   }
 
   void toggle(BuildContext context) {
     log('emoji');
-    showEmojis = showEmojis;
+    showEmojis = !showEmojis;
     FocusScope.of(context).unfocus();
     notifyListeners();
   }
