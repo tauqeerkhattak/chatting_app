@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_chatting/providers/splash_provider.dart';
 import 'package:flutter_chatting/screens/splash/splash.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,8 +15,11 @@ class FlutterChatting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Splash(),
+    return ChangeNotifierProvider<SplashProvider>(
+      create: (context) => SplashProvider(),
+      child: const MaterialApp(
+        home: Splash(),
+      ),
     );
   }
 }

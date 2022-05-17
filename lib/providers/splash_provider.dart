@@ -8,39 +8,35 @@ import 'package:flutter_chatting/screens/login/login.dart';
 class SplashProvider extends ChangeNotifier {
   void onInit(BuildContext context) async {
     try {
-      print('HAHAHAHAHAH');
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        print('User found');
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return const Home();
-            },
-          ),
-          (route) => false,
-        );
-      } else {
-        print('User not found');
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return Login();
-            },
-          ),
-          (route) => false,
-        );
-      }
-      // await Future.delayed(
-      //   const Duration(
-      //     seconds: 5,
-      //   ),
-      //   () {
-      //
-      //   },
-      // );
+      await Future.delayed(
+        const Duration(
+          seconds: 5,
+        ),
+        () {
+          User? user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return const Home();
+                },
+              ),
+              (route) => false,
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return Login();
+                },
+              ),
+              (route) => false,
+            );
+          }
+        },
+      );
     } on Exception catch (e) {
       log('Meri marzi: $e');
     }

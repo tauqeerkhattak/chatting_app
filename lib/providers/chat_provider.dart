@@ -1,15 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart' hide KeyboardListener;
-import 'package:get/get.dart';
 import 'package:keyboard_utils/keyboard_listener.dart';
 import 'package:keyboard_utils/keyboard_utils.dart';
 
-class ChatController extends GetxController {
+class ChatProvider extends ChangeNotifier {
   final ScrollController scrollController = ScrollController(
     initialScrollOffset: 0.0,
   );
   TextEditingController messageController = TextEditingController();
-  Rx<bool> showEmojis = false.obs;
-  Rx<double> keyboardHeight = 0.0.obs;
+  bool showEmojis = false;
+  double keyboardHeight = 0.0;
   final KeyboardUtils _keyboardUtils = KeyboardUtils();
   final List<String> dummyText = [
     'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.',
@@ -24,17 +25,23 @@ class ChatController extends GetxController {
   ];
   int? listener;
 
-  @override
   void onInit() {
+    print('OnInit');
     listener = _keyboardUtils.add(
       listener: KeyboardListener(
         willShowKeyboard: (height) {
-          keyboardHeight.value = height;
-          showEmojis.value = false;
+          keyboardHeight = height;
+          showEmojis = false;
         },
       ),
     );
-    super.onInit();
+  }
+
+  void toggle(BuildContext context) {
+    log('emoji');
+    showEmojis = showEmojis;
+    FocusScope.of(context).unfocus();
+    notifyListeners();
   }
 
   @override
