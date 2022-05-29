@@ -19,9 +19,9 @@ class Home extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Constants.primaryColor,
           onPressed: () {
-            Get.to(
-              () => ContactsPage(),
-            );
+            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) {
+              return ContactsPage();
+            },),);
           },
           child: Icon(
             Icons.person_add_alt_1,

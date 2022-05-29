@@ -11,9 +11,6 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatelessWidget {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
   Login({Key? key}) : super(key: key);
 
   @override
@@ -33,7 +30,7 @@ class Login extends StatelessWidget {
                 ),
               ),
               child: Form(
-                key: formKey,
+                key: login.formKey,
                 child: Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
@@ -89,7 +86,7 @@ class Login extends StatelessWidget {
                         ),
                         CustomTextField(
                           label: 'Email',
-                          controller: emailController,
+                          controller: login.emailController,
                           keyboardType: TextInputType.visiblePassword,
                           validator: (String? text) {
                             if (text!.isEmpty) {
@@ -105,7 +102,7 @@ class Login extends StatelessWidget {
                         CustomTextField(
                           label: 'Password',
                           hideText: true,
-                          controller: passwordController,
+                          controller: login.passwordController,
                           keyboardType: TextInputType.visiblePassword,
                           validator: (String? text) {
                             if (text!.isEmpty) {
@@ -119,19 +116,21 @@ class Login extends StatelessWidget {
                         CustomButton(
                           buttonText: 'Login',
                           onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              String email = emailController.text;
-                              String password = passwordController.text;
-                              login.login(email, password);
+                            if (login.formKey.currentState!.validate()) {
+                              String email = login.emailController.text;
+                              String password = login.passwordController.text;
+                              login.login(email, password,context);
                             }
                           },
                         ),
                         const Spacer(),
                         InkWell(
                           onTap: () {
-                            Get.to(
-                              () => Register(),
-                            );
+                            Navigator.push(context,MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return Register();
+                              }
+                            ),);
                           },
                           child: Container(
                             margin: const EdgeInsets.only(

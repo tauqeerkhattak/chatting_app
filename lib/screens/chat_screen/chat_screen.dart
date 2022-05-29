@@ -1,29 +1,57 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide KeyboardListener;
 import 'package:flutter_chatting/data/constants.dart';
 import 'package:flutter_chatting/data/size_config.dart';
 import 'package:flutter_chatting/providers/chat_provider.dart';
 import 'package:flutter_chatting/widgets/chat_bubble.dart';
 import 'package:flutter_chatting/widgets/custom_textfield.dart';
 import 'package:keyboard_utils/keyboard_aware/keyboard_aware.dart';
+import 'package:keyboard_utils/keyboard_listener.dart';
 import 'package:provider/provider.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   final String name;
 
   const ChatScreen({Key? key, required this.name}) : super(key: key);
 
   @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ChatProvider provider = Provider.of<ChatProvider>(context,listen: false,);
+      provider.listener = provider.keyboardUtils.add(
+        listener: KeyboardListener(
+          willShowKeyboard: (height) {
+            if (height != 0.0) {
+              provider.keyboardHeight = height;
+              print('Keyboard HEight: $height ${provider.keyboardHeight}');
+            }
+            provider.showEmojis = false;
+          },
+          willHideKeyboard: () {
+            print('Keyboard hide: ${provider.keyboardHeight}');
+          },
+        ),
+      );
+    });
+    super.initState();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ChatProvider>(
-      create: (context) {
-        return ChatProvider().onInit();
-      },
+      create: (context) => ChatProvider(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            name,
+            widget.name,
             style: TextStyle(
               color: Constants.textColor,
             ),
@@ -76,6 +104,7 @@ class ChatScreen extends StatelessWidget {
                             color: Constants.primaryColor,
                           ),
                           onPressed: () {
+                            log('Emoji status: ${data.showEmojis}');
                             data.toggle(context);
                           },
                         ),
@@ -106,13 +135,13 @@ class ChatScreen extends StatelessWidget {
                             'Keyboard open: ${config.isKeyboardOpen} showEmojis: ${data.showEmojis}');
                         if (config.isKeyboardOpen) {
                           if (data.showEmojis) {
-                            return showEmojiPicker(data);
+                            return showEmojiPicker(data.keyboardHeight);
                           } else {
                             return const SizedBox();
                           }
                         } else {
                           if (data.showEmojis) {
-                            return showEmojiPicker(data);
+                            return showEmojiPicker(data.keyboardHeight);
                           } else {
                             return const SizedBox();
                           }
@@ -129,12 +158,13 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
-  Widget showEmojiPicker(ChatProvider pod) {
-    print('ShowEmojiPicker ${pod.keyboardHeight}');
-    return Container(
+  Widget showEmojiPicker(double height) {
+    print('ShowEmojiPicker $height');
+    Container widget =  Container(
       width: SizeConfig.screenWidth,
-      height: pod.keyboardHeight,
+      height: height,
       color: Constants.primaryColor,
+      child: Center(),
       // child: EmojiPicker(
       //   onEmojiSelected: (category, emoji) {
       //     pod.messageController.text += emoji.emoji;
@@ -157,5 +187,7 @@ class ChatScreen extends StatelessWidget {
       //   ),
       // ),
     );
+    log('Widget Heigh: ${widget.constraints!.minHeight}');
+    return widget;
   }
 }

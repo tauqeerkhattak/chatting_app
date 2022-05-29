@@ -10,12 +10,12 @@ class HomeProvider extends ChangeNotifier {
 
   void logout(BuildContext context) async {
     log('Logout');
-    await FirebaseService.logout().then((value) {
+    await FirebaseService.logout(context).then((value) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (BuildContext context) {
           return Login();
-        }),
+        },),
         (route) => false,
       );
     });

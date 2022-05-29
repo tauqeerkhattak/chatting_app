@@ -11,7 +11,7 @@ class ChatProvider extends ChangeNotifier {
   TextEditingController messageController = TextEditingController();
   bool showEmojis = false;
   double keyboardHeight = 0.0;
-  final KeyboardUtils _keyboardUtils = KeyboardUtils();
+  final KeyboardUtils keyboardUtils = KeyboardUtils();
   final List<String> dummyText = [
     'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.',
     'Aliquam tincidunt mauris eu risus.',
@@ -24,25 +24,7 @@ class ChatProvider extends ChangeNotifier {
     'Integer vitae libero ac risus egestas placerat.',
   ];
   int? listener;
-
-  ChatProvider onInit() {
-    print('OnInit!');
-    listener = _keyboardUtils.add(
-      listener: KeyboardListener(
-        willShowKeyboard: (height) {
-          if (height != 0.0) {
-            keyboardHeight = height;
-            print('Keyboard HEight: $height $keyboardHeight');
-          }
-          showEmojis = false;
-        },
-        willHideKeyboard: () {
-          print('Keyboard hide: $keyboardHeight');
-        },
-      ),
-    );
-    return ChatProvider();
-  }
+  
 
   void toggle(BuildContext context) {
     log('emoji');
@@ -53,9 +35,9 @@ class ChatProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _keyboardUtils.unsubscribeListener(subscribingId: listener);
-    if (_keyboardUtils.canCallDispose()) {
-      _keyboardUtils.dispose();
+    keyboardUtils.unsubscribeListener(subscribingId: listener);
+    if (keyboardUtils.canCallDispose()) {
+      keyboardUtils.dispose();
     }
     super.dispose();
   }

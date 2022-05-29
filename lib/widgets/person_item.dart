@@ -16,11 +16,12 @@ class PersonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) {
-              return ChatScreen(name: name);
+            builder: (BuildContext context) {
+              return ChatScreen(
+                name: name,
+              );
             },
           ),
         );
